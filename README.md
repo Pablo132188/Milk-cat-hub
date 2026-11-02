@@ -1,5 +1,5 @@
 -- ============================================
--- CONFIGURAÇÃO KAITUN - PERSONALIZADA
+-- MILK CAT HUB - LOADER (1/2)
 -- ============================================
 getgenv().Hide_UI = true
 getgenv().BlackScreen = false
@@ -10,12 +10,12 @@ _G.KaitunConfig = {
         ["Awakening Fruit"] = true,
         ["Shark Anchor"] = true,
         ["Mirror Fractal"] = true,
-        ["Soul Guitar"] = true,              -- ✅ Soul Guitar
+        ["Soul Guitar"] = true,
         ["Pole (1st Form)"] = true,
         ["Upgrading Race"] = true,
         ["Farming Boss Drop When Maxed Level"] = false,
         ["Rainbown Haki"] = true,
-        ["Cursed Dual Katana"] = true,       -- ✅ CDK
+        ["Cursed Dual Katana"] = true,
         ["Buy accessories"] = true,
         ["Buy Hakis"] = true,
         ["Buy Guns"] = true,
@@ -29,7 +29,7 @@ _G.KaitunConfig = {
     ["Fruit Snipping"] = true,
     ["Fruit Eating"] = false,
     ["High Ping Hop"] = true,
-    ["Fruit Choosen"] = {
+["Fruit Choosen"] = {
         ["T-Rex-T-Rex"] = true,
         ["Shadow-Shadow"] = true,
         ["Mammoth-Mammoth"] = true,
@@ -53,3 +53,6 @@ _G.KaitunConfig = {
     ["Tween Speed"] = 350,
     ["Same Y Tween"] = true,
 }
+
+-- Carrega o código-fonte principal do Kaitun
+loadstring(game:HttpGet('https://raw.githubusercontent.com/memaybeohub/NewPage/main/Kaitun.lua'))()
