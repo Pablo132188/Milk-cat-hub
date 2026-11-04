@@ -1,4 +1,4 @@
--- Halloween Hub 2026 - Versão Completa Melhorada
+-- Halloween Hub 2026 - Versão Completa com AutoFarm Funcional
 print("🎃 Iniciando Halloween Hub 2026...")
 
 -- Esperar o jogo carregar
@@ -7,6 +7,10 @@ task.wait(2)
 -- Config Global
 getgenv().Config = {
     ["StartFarm"] = true,
+    ["AutoFarm"] = false,
+    ["AutoQuest"] = true,
+    ["AutoStats"] = false,
+    ["AutoStatsPoint"] = "Melee",
     ["Halloween"] = {
         ["Enabled"] = true,
         ["AutoCollectCandy"] = true,
@@ -27,18 +31,11 @@ getgenv().Config = {
         ["AutoFarmSpawnedFruit"] = true,
         ["AutoSpinFruit"] = true,
         ["AutoStoreFruit"] = true,
-    },
-    ["Farm"] = {
-        ["AutoQuest"] = true,
-        ["AutoFarmMobs"] = true,
-        ["AutoFarmBoss"] = true,
-        ["AutoFarmLevel"] = true,
-        ["AutoFarmMoney"] = true,
+        ["SpecificFruit"] = "Dragon",
     },
     ["Settings"] = {
         ["FPSBooster"] = true,
         ["AntiAfk"] = true,
-        ["AutoHop"] = true,
     },
 }
 
@@ -175,7 +172,7 @@ local function createTab(name, icon, color)
     return tabContent
 end
 
--- Função para criar toggle melhorado
+-- Função para criar toggle
 local function createToggle(parent, text, default, callback)
     local toggleFrame = Instance.new("Frame")
     toggleFrame.Size = UDim2.new(1, -20, 0, 45)
@@ -185,7 +182,6 @@ local function createToggle(parent, text, default, callback)
     toggleFrame.BorderSizePixel = 0
     toggleFrame.Parent = parent
     
-    -- Borda esquerda colorida
     local border = Instance.new("Frame")
     border.Size = UDim2.new(0, 4, 1, 0)
     border.BackgroundColor3 = Color3.fromRGB(255, 170, 0)
@@ -234,7 +230,7 @@ local function createToggle(parent, text, default, callback)
     return toggleBtn
 end
 
--- Função para criar botão melhorado
+-- Função para criar botão
 local function createButton(parent, text, callback, color)
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(1, -20, 0, 45)
@@ -314,10 +310,12 @@ end
 
 -- Criar Abas
 local mainTab = createTab("Principal", "🏠", Color3.fromRGB(255, 170, 0))
+local farmTab = createTab("Farm", "⚔️", Color3.fromRGB(150, 255, 50))
 local halloweenTab = createTab("Halloween", "🎃", Color3.fromRGB(255, 100, 0))
 local seaTab = createTab("Sea", "🌊", Color3.fromRGB(0, 150, 255))
 local fruitTab = createTab("Frutas", "🍎", Color3.fromRGB(255, 50, 50))
-local farmTab = createTab("Farm", "⚔️", Color3.fromRGB(150, 255, 50))
+local teleportTab = createTab("Teleports", "📍", Color3.fromRGB(200, 100, 255))
+local statsTab = createTab("Stats", "📊", Color3.fromRGB(100, 200, 100))
 local settingsTab = createTab("Config", "⚙️", Color3.fromRGB(200, 200, 200))
 
 -- Aba Principal
@@ -326,24 +324,8 @@ createToggle(mainTab, "Iniciar Farm", true, function(value)
     getgenv().Config.StartFarm = value
 end)
 
-createLabel(mainTab, "📍 Teleports")
-createButton(mainTab, "🌊 Sea 1 - Ilha Central", function()
-    local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-    if hrp then hrp.CFrame = CFrame.new(500, 50, 500) end
-end, Color3.fromRGB(0, 150, 255))
-
-createButton(mainTab, "🌊 Sea 2 - Frente Café", function()
-    local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-    if hrp then hrp.CFrame = CFrame.new(-2000, 50, 1000) end
-end, Color3.fromRGB(0, 150, 255))
-
-createButton(mainTab, "🌊 Sea 3 - Mansão", function()
-    local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-    if hrp then hrp.CFrame = CFrame.new(3000, 50, -2000) end
-end, Color3.fromRGB(0, 150, 255))
-
-createLabel(mainTab, "⚡ Status")
-createButton(mainTab, "📊 Ver Nível", function()
+createLabel(mainTab, "📊 Status")
+createButton(mainTab, "Ver Nível", function()
     local level = player.Data.Level.Value
     game:GetService("StarterGui"):SetCore("SendNotification", {
         Title = "Nível",
@@ -351,6 +333,29 @@ createButton(mainTab, "📊 Ver Nível", function()
         Duration = 3
     })
 end, Color3.fromRGB(100, 200, 100))
+
+-- Aba Farm
+createLabel(farmTab, "⚔️ AutoFarm de Nível")
+createToggle(farmTab, "AutoFarm Ativo", false, function(value)
+    getgenv().Config.AutoFarm = value
+end)
+
+createToggle(farmTab, "Auto Quest", true, function(value)
+    getgenv().Config.AutoQuest = value
+end)
+
+createLabel(farmTab, "⚔️ Farm Geral")
+createToggle(farmTab, "Farm Mobs", true, function(value)
+    getgenv().Config.Farm.AutoFarmMobs = value
+end)
+
+createToggle(farmTab, "Farm Boss", true, function(value)
+    getgenv().Config.Farm.AutoFarmBoss = value
+end)
+
+createToggle(farmTab, "Farm Money", true, function(value)
+    getgenv().Config.Farm.AutoFarmMoney = value
+end)
 
 -- Aba Halloween
 createLabel(halloweenTab, "🎃 Halloween 2026")
@@ -377,22 +382,6 @@ end)
 createToggle(halloweenTab, "Trick-or-Treat", true, function(value)
     getgenv().Config.Halloween.AutoTrickOrTreat = value
 end)
-
-createLabel(halloweenTab, "📍 Teleports do Evento")
-createButton(halloweenTab, "🎃 Evento Sea 1", function()
-    local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-    if hrp then hrp.CFrame = CFrame.new(500, 50, 500) end
-end, Color3.fromRGB(255, 100, 0))
-
-createButton(halloweenTab, "🎃 Evento Sea 2", function()
-    local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-    if hrp then hrp.CFrame = CFrame.new(-2000, 50, 1000) end
-end, Color3.fromRGB(255, 100, 0))
-
-createButton(halloweenTab, "🎃 Evento Sea 3", function()
-    local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-    if hrp then hrp.CFrame = CFrame.new(3000, 50, -2000) end
-end, Color3.fromRGB(255, 100, 0))
 
 -- Aba Sea Events
 createLabel(seaTab, "🌊 Sea Events")
@@ -438,26 +427,93 @@ createDropdown(fruitTab, "Fruta Específica", {"Dragon", "Leopard", "Venom", "Do
     getgenv().Config.Fruit.SpecificFruit = value
 end)
 
--- Aba Farm
-createLabel(farmTab, "⚔️ Farm Geral")
-createToggle(farmTab, "Auto Quest", true, function(value)
-    getgenv().Config.Farm.AutoQuest = value
+-- Aba Teleports
+createLabel(teleportTab, "📍 Teleports - Sea 1")
+createButton(teleportTab, "🏝️ Pirate Island", function()
+    local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+    if hrp then hrp.CFrame = CFrame.new(1041.886, 16.273, 1424.937) end
+end, Color3.fromRGB(0, 150, 255))
+
+createButton(teleportTab, "🏝️ Marine Island", function()
+    local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+    if hrp then hrp.CFrame = CFrame.new(-2896.686, 41.488, 2009.274) end
+end, Color3.fromRGB(0, 150, 255))
+
+createButton(teleportTab, "🏟️ Colosseum", function()
+    local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+    if hrp then hrp.CFrame = CFrame.new(-1541.088, 7.389, -2987.405) end
+end, Color3.fromRGB(0, 150, 255))
+
+createButton(teleportTab, "🏜️ Desert", function()
+    local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+    if hrp then hrp.CFrame = CFrame.new(1094.320, 6.569, 4231.635) end
+end, Color3.fromRGB(0, 150, 255))
+
+createButton(teleportTab, "🌆 Fouatin City", function()
+    local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+    if hrp then hrp.CFrame = CFrame.new(5529.723, 429.357, 4245.549) end
+end, Color3.fromRGB(0, 150, 255))
+
+createButton(teleportTab, "🌴 Jungle", function()
+    local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+    if hrp then hrp.CFrame = CFrame.new(-1615.188, 36.852, 150.804) end
+end, Color3.fromRGB(0, 150, 255))
+
+createButton(teleportTab, "🏰 Marine Fort", function()
+    local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+    if hrp then hrp.CFrame = CFrame.new(-4846.149, 20.652, 4393.650) end
+end, Color3.fromRGB(0, 150, 255))
+
+createButton(teleportTab, "🏘️ Middle Town", function()
+    local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+    if hrp then hrp.CFrame = CFrame.new(-705.997, 7.852, 1547.521) end
+end, Color3.fromRGB(0, 150, 255))
+
+createButton(teleportTab, "⛓️ Prison", function()
+    local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+    if hrp then hrp.CFrame = CFrame.new(4841.844, 5.651, 741.329) end
+end, Color3.fromRGB(0, 150, 255))
+
+createButton(teleportTab, "🏴‍☠️ Pirate Village", function()
+    local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+    if hrp then hrp.CFrame = CFrame.new(-1146.429, 4.752, 3818.503) end
+end, Color3.fromRGB(0, 150, 255))
+
+createLabel(teleportTab, "📍 Teleports - Sky")
+createButton(teleportTab, "☁️ Sky 1", function()
+    local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+    if hrp then hrp.CFrame = CFrame.new(-4967.836, 717.671, -2623.843) end
+end, Color3.fromRGB(150, 150, 255))
+
+createButton(teleportTab, "☁️ Sky 2", function()
+    local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+    if hrp then hrp.CFrame = CFrame.new(-7876.077, 5545.581, -381.199) end
+end, Color3.fromRGB(150, 150, 255))
+
+createLabel(teleportTab, "📍 Teleports - Outros")
+createButton(teleportTab, "❄️ Snow", function()
+    local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+    if hrp then hrp.CFrame = CFrame.new(1100.361, 5.290, -1151.541) end
+end, Color3.fromRGB(150, 200, 255))
+
+createButton(teleportTab, "🌊 Under Water", function()
+    local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+    if hrp then hrp.CFrame = CFrame.new(61135.292, 18.471, 1597.682) end
+end, Color3.fromRGB(0, 100, 200))
+
+createButton(teleportTab, "🌋 Magma Village", function()
+    local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+    if hrp then hrp.CFrame = CFrame.new(-5248.271, 8.699, 8452.890) end
+end, Color3.fromRGB(255, 100, 0))
+
+-- Aba Stats
+createLabel(statsTab, "📊 Auto Stats")
+createToggle(statsTab, "Auto Stats Ativo", false, function(value)
+    getgenv().Config.AutoStats = value
 end)
 
-createToggle(farmTab, "Farm Mobs", true, function(value)
-    getgenv().Config.Farm.AutoFarmMobs = value
-end)
-
-createToggle(farmTab, "Farm Boss", true, function(value)
-    getgenv().Config.Farm.AutoFarmBoss = value
-end)
-
-createToggle(farmTab, "Farm Level", true, function(value)
-    getgenv().Config.Farm.AutoFarmLevel = value
-end)
-
-createToggle(farmTab, "Farm Money", true, function(value)
-    getgenv().Config.Farm.AutoFarmMoney = value
+createDropdown(statsTab, "Ponto de Stat", {"Melee", "Defense", "Sword", "Gun", "Devil Fruit"}, "Melee", function(value)
+    getgenv().Config.AutoStatsPoint = value
 end)
 
 -- Aba Config
@@ -476,181 +532,69 @@ createToggle(settingsTab, "Anti-Afk", true, function(value)
     getgenv().Config.Settings.AntiAfk = value
 end)
 
-createToggle(settingsTab, "Auto Hop", true, function(value)
-    getgenv().Config.Settings.AutoHop = value
-end)
-
-createLabel(settingsTab, "📝 Informações")
-createButton(settingsTab, "ℹ️ Sobre o Script", function()
-    game:GetService("StarterGui"):SetCore("SendNotification", {
-        Title = "Halloween Hub 2026",
-        Text = "Versão 1.0\nFeito para Blox Fruits\nby NaNa Hub",
-        Duration = 5
-    })
-end, Color3.fromRGB(200, 200, 200))
-
 -- Mostrar primeira aba
 tabs[1].content.Visible = true
 tabs[1].button.BackgroundColor3 = Color3.fromRGB(255, 170, 0)
 
--- Funções principais
+-- Funções do AutoFarm
 
--- Detectar Sea atual
-local function getSea()
-    local map = workspace:FindFirstChild("Map")
-    if map then
-        if map:FindFirstChild("Sea1") then return 1 end
-        if map:FindFirstChild("Sea2") then return 2 end
-        if map:FindFirstChild("Sea3") then return 3 end
-    end
-    return 0
-end
-
--- Função para encontrar Jack-O-Lanterns
-local function findJackOLanterns()
-    for _, v in ipairs(workspace:GetChildren()) do
-        if v.Name:match("Jack") or v.Name:match("Pumpkin") or 
-           v.Name:match("Lantern") or v.Name:match("Candy") then
-            if v:FindFirstChild("HumanoidRootPart") then
-                return v
-            end
-        end
-    end
-    return nil
-end
-
--- Função para encontrar Hell Rider
-local function findHellRider()
-    for _, v in ipairs(workspace:GetChildren()) do
-        if v.Name:match("Hell") or v.Name:match("Rider") or 
-           v.Name:match("Devil") then
-            if v:FindFirstChild("HumanoidRootPart") then
-                return v
-            end
-        end
-    end
-    return nil
-end
-
--- Função para encontrar Candy Corn
-local function findCandyCorn()
-    for _, v in ipairs(workspace:GetChildren()) do
-        if v.Name:match("Candy") or v.Name:match("Corn") then
-            return v
-        end
-    end
-    return nil
-end
-
--- Função para encontrar frutas spawnadas
-local function findSpawnedFruit()
-    for _, v in ipairs(workspace:GetChildren()) do
-        if v:IsA("Tool") and v:FindFirstChild("Fruit") then
-            return v
-        end
-    end
-    return nil
-end
-
--- Função para encontrar Sea Events
-local function findSeaEvent()
-    for _, v in ipairs(workspace:GetChildren()) do
-        if v.Name:match("Kraken") or v.Name:match("SeaBeast") or 
-           v.Name:match("Terror") or v.Name:match("Ship") or
-           v.Name:match("Mermaid") then
-            return v
-        end
-    end
-    return nil
-end
-
--- Loop Principal
-spawn(function()
-    while task.wait(0.5) do
-        if not getgenv().Config.StartFarm then continue end
-        
-        local char = player.Character
-        if not char then continue end
-        
-        local hrp = char:FindFirstChild("HumanoidRootPart")
-        if not hrp then continue end
-        
-        -- Farm Halloween 2026
-        if getgenv().Config.Halloween.Enabled then
-            -- Farm Hell Rider
-            if getgenv().Config.Halloween.AutoKillHellRider then
-                local hellRider = findHellRider()
-                if hellRider then
-                    hrp.CFrame = hellRider.HumanoidRootPart.CFrame * CFrame.new(0, 0, 5)
-                    task.wait(0.1)
-                    game:GetService("VirtualUser"):Button1Down()
-                    task.wait(0.1)
-                    game:GetService("VirtualUser"):Button1Up()
-                end
-            end
-            
-            -- Farm Jack-O-Lanterns
-            if getgenv().Config.Halloween.AutoFarmJackOLanterns then
-                local jack = findJackOLanterns()
-                if jack then
-                    hrp.CFrame = jack.HumanoidRootPart.CFrame * CFrame.new(0, 0, 5)
-                    task.wait(0.1)
-                    game:GetService("VirtualUser"):Button1Down()
-                    task.wait(0.1)
-                    game:GetService("VirtualUser"):Button1Up()
-                end
-            end
-            
-            -- Coletar Candy Corn
-            if getgenv().Config.Halloween.AutoCollectCandy then
-                local candy = findCandyCorn()
-                if candy then
-                    hrp.CFrame = candy.Position
-                    task.wait(0.1)
-                end
-            end
-        end
-        
-        -- Sea Events
-        if getgenv().Config.SeaEvents.Enabled then
-            local event = findSeaEvent()
-            if event and event:FindFirstChild("HumanoidRootPart") then
-                hrp.CFrame = event.HumanoidRootPart.CFrame * CFrame.new(0, 0, 10)
-                task.wait(0.1)
-                game:GetService("VirtualUser"):Button1Down()
-                task.wait(0.1)
-                game:GetService("VirtualUser"):Button1Up()
-            end
-        end
-        
-        -- Frutas
-        if getgenv().Config.Fruit.AutoFarmSpawnedFruit then
-            local fruit = findSpawnedFruit()
-            if fruit and fruit:FindFirstChild("Handle") then
-                hrp.CFrame = fruit.Handle.CFrame
-                task.wait(0.1)
-            end
-        end
-    end
-end)
-
--- Anti-Afk
-spawn(function()
-    while task.wait(60) do
-        if getgenv().Config.Settings.AntiAfk then
-            local virtualUser = game:GetService("VirtualUser")
-            virtualUser:CaptureController()
-            virtualUser:ClickButton2(Vector2.new())
-        end
-    end
-end)
-
--- FPS Booster
-if getgenv().Config.Settings.FPSBooster then
-    pcall(function()
-        settings().Rendering.EnableFRM = true
-        settings().Rendering.FrameRateManager:SetFrameRate(60)
-    end)
-end
-
-print("✅ Halloween Hub 2026 carregado com sucesso!")
+-- Sistema de Quest
+local function CheckQuest()
+    local Lv = player.Data.Level.Value
+    if Lv == 0 or Lv <= 10 then
+        Ms = "Bandit [Lv. 5]"
+        NM = "Bandit"
+        LQ = "BanditQuest1"
+        NQ = "Bandit"
+        CQ = CFrame.new(1062.646, 16.516, 1546.552)
+    elseif Lv == 10 or Lv <= 20 then
+        Ms = "Monkey [Lv. 14]"
+        NM = "Monkey"
+        LQ = "JungleQuest"
+        NQ = "Monkey"
+        CQ = CFrame.new(-1601.655, 36.852, 153.388)
+    elseif Lv == 20 or Lv <= 30 then
+        Ms = "Gorilla [Lv. 20]"
+        NM = "Gorilla"
+        LQ = "JungleQuest"
+        NQ = "Gorilla"
+        CQ = CFrame.new(-1601.655, 36.852, 153.388)
+    elseif Lv == 30 or Lv <= 40 then
+        Ms = "Pirate [Lv. 35]"
+        NM = "Pirate"
+        LQ = "BuggyQuest1"
+        NQ = "Pirate"
+        CQ = CFrame.new(-1141.074, 4.100, 3831.549)
+    elseif Lv == 40 or Lv <= 60 then
+        Ms = "Brute [Lv. 45]"
+        NM = "Brute"
+        LQ = "BuggyQuest1"
+        NQ = "Brute"
+        CQ = CFrame.new(-1141.074, 4.100, 3831.549)
+    elseif Lv == 60 or Lv <= 75 then
+        Ms = "Desert Bandit [Lv. 60]"
+        NM = "Desert Bandit"
+        LQ = "DesertQuest"
+        NQ = "Desert Bandit"
+        CQ = CFrame.new(894.488, 5.140, 4392.195)
+    elseif Lv == 75 or Lv <= 90 then
+        Ms = "Desert Officer [Lv. 70]"
+        NM = "Desert Officer"
+        LQ = "DesertQuest"
+        NQ = "Desert Officer"
+        CQ = CFrame.new(894.488, 5.140, 4392.195)
+    elseif Lv == 90 or Lv <= 110 then
+        Ms = "Snow Bandit [Lv. 90]"
+        NM = "Snow Bandit"
+        LQ = "SnowQuest"
+        NQ = "Snow Bandit"
+        CQ = CFrame.new(1380.886, 5.140, -1267.758)
+    elseif Lv == 110 or Lv <= 125 then
+        Ms = "Snowman [Lv. 100]"
+        NM = "Snowman"
+        LQ = "SnowQuest"
+        NQ = "Snowman"
+        CQ = CFrame.new(1380.886, 5.140, -1267.758)
+    elseif Lv == 125 or Lv <= 150 then
+        Ms = "Chief Petty Officer [Lv. 120]"
+        NM = "Chief Petty Officer"
