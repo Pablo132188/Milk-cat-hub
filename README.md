@@ -1,5 +1,5 @@
--- Halloween Hub 2026 - AutoFarm até Level 2800
-print("🎃 Iniciando...")
+-- Halloween Hub 2026 - AutoFarm Corrigido
+print("🎃 Iniciando Halloween Hub 2026...")
 
 -- Esperar jogo carregar
 task.wait(2)
@@ -28,8 +28,8 @@ screenGui.Parent = playerGui
 
 -- Frame Principal
 local mainFrame = Instance.new("Frame")
-mainFrame.Size = UDim2.new(0, 450, 0, 400)
-mainFrame.Position = UDim2.new(0.5, -225, 0.5, -200)
+mainFrame.Size = UDim2.new(0, 400, 0, 350)
+mainFrame.Position = UDim2.new(0.5, -200, 0.5, -175)
 mainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
 mainFrame.BorderSizePixel = 0
 mainFrame.Active = true
@@ -75,7 +75,6 @@ contentFrame.Parent = mainFrame
 
 -- Sistema de abas
 local tabs = {}
-local currentTab = nil
 
 local function createTab(name)
     local btn = Instance.new("TextButton")
@@ -229,73 +228,79 @@ local statsToggle = createToggle(statsTab, "Auto Stats", false)
 tabs[1].content.Visible = true
 tabs[1].button.BackgroundColor3 = Color3.fromRGB(255, 170, 0)
 
--- Sistema de Quest até Level 2800
-local function CheckQuest()
-    local Lv = player.Data.Level.Value
-    
+-- Sistema de Quest CORRIGIDO com nomes reais
+local questData = {
     -- Sea 1 (Level 1-700)
-    if Lv <= 10 then return "Bandit [Lv. 5]", "Bandit", "BanditQuest1", "Bandit", CFrame.new(1062.646, 16.516, 1546.552)
-    elseif Lv <= 20 then return "Monkey [Lv. 14]", "Monkey", "JungleQuest", "Monkey", CFrame.new(-1601.655, 36.852, 153.388)
-    elseif Lv <= 30 then return "Gorilla [Lv. 20]", "Gorilla", "JungleQuest", "Gorilla", CFrame.new(-1601.655, 36.852, 153.388)
-    elseif Lv <= 40 then return "Pirate [Lv. 35]", "Pirate", "BuggyQuest1", "Pirate", CFrame.new(-1141.074, 4.100, 3831.549)
-    elseif Lv <= 60 then return "Brute [Lv. 45]", "Brute", "BuggyQuest1", "Brute", CFrame.new(-1141.074, 4.100, 3831.549)
-    elseif Lv <= 75 then return "Desert Bandit [Lv. 60]", "Desert Bandit", "DesertQuest", "Desert Bandit", CFrame.new(894.488, 5.140, 4392.195)
-    elseif Lv <= 90 then return "Desert Officer [Lv. 70]", "Desert Officer", "DesertQuest", "Desert Officer", CFrame.new(894.488, 5.140, 4392.195)
-    elseif Lv <= 110 then return "Snow Bandit [Lv. 90]", "Snow Bandit", "SnowQuest", "Snow Bandit", CFrame.new(1380.886, 5.140, -1267.758)
-    elseif Lv <= 125 then return "Snowman [Lv. 100]", "Snowman", "SnowQuest", "Snowman", CFrame.new(1380.886, 5.140, -1267.758)
-    elseif Lv <= 150 then return "Chief Petty Officer [Lv. 120]", "Chief Petty Officer", "MarineQuest2", "Chief Petty Officer", CFrame.new(-5039.586, 27.613, 4324.684)
-    elseif Lv <= 175 then return "Sky Bandit [Lv. 150]", "Sky Bandit", "SkyQuest", "Sky Bandit", CFrame.new(-4839.530, 717.667, -2619.441)
-    elseif Lv <= 200 then return "Dark Master [Lv. 175]", "Dark Master", "SkyQuest", "Dark Master", CFrame.new(-4839.530, 717.667, -2619.441)
-    elseif Lv <= 225 then return "Toga Warrior [Lv. 200]", "Toga Warrior", "ColosseumQuest", "Toga Warrior", CFrame.new(-1580.745, 7.388, -2986.324)
-    elseif Lv <= 250 then return "Gladiator [Lv. 225]", "Gladiator", "ColosseumQuest", "Gladiator", CFrame.new(-1580.745, 7.388, -2986.324)
-    elseif Lv <= 275 then return "Military Soldier [Lv. 250]", "Military Soldier", "MagmaQuest", "Military Soldier", CFrame.new(-5316.115, 12.240, 8517.003)
-    elseif Lv <= 300 then return "Military Spy [Lv. 275]", "Military Spy", "MagmaQuest", "Military Spy", CFrame.new(-5316.115, 12.240, 8517.003)
-    elseif Lv <= 325 then return "Fishman Warrior [Lv. 300]", "Fishman Warrior", "FishmanQuest", "Fishman Warrior", CFrame.new(61122.562, 18.471, 1568.165)
-    elseif Lv <= 350 then return "Fishman Commando [Lv. 325]", "Fishman Commando", "FishmanQuest", "Fishman Commando", CFrame.new(61122.562, 18.471, 1568.165)
-    elseif Lv <= 375 then return "God's Guard [Lv. 350]", "God's Guard", "SkyExp1Quest", "God's Guard", CFrame.new(-4721.860, 843.534, -1949.966)
-    elseif Lv <= 400 then return "Shanda [Lv. 375]", "Shanda", "SkyExp1Quest", "Shanda", CFrame.new(-4721.860, 843.534, -1949.966)
-    elseif Lv <= 450 then return "Royal Squad [Lv. 400]", "Royal Squad", "SkyExp2Quest", "Royal Squad", CFrame.new(-7906.815, 5545.403, -427.471)
-    elseif Lv <= 500 then return "Royal Soldier [Lv. 450]", "Royal Soldier", "SkyExp2Quest", "Royal Soldier", CFrame.new(-7906.815, 5545.403, -427.471)
+    {minLevel = 1, maxLevel = 10, npc = "Bandit", mob = "Bandit [Lv. 5]", quest = "BanditQuest1", questNPC = "Bandit", questPos = CFrame.new(1062.646, 16.516, 1546.552)},
+    {minLevel = 10, maxLevel = 20, npc = "Monkey", mob = "Monkey [Lv. 14]", quest = "JungleQuest", questNPC = "Monkey", questPos = CFrame.new(-1601.655, 36.852, 153.388)},
+    {minLevel = 20, maxLevel = 30, npc = "Gorilla", mob = "Gorilla [Lv. 20]", quest = "JungleQuest", questNPC = "Gorilla", questPos = CFrame.new(-1601.655, 36.852, 153.388)},
+    {minLevel = 30, maxLevel = 40, npc = "Pirate", mob = "Pirate [Lv. 35]", quest = "BuggyQuest1", questNPC = "Pirate", questPos = CFrame.new(-1141.074, 4.100, 3831.549)},
+    {minLevel = 40, maxLevel = 60, npc = "Brute", mob = "Brute [Lv. 45]", quest = "BuggyQuest1", questNPC = "Brute", questPos = CFrame.new(-1141.074, 4.100, 3831.549)},
+    {minLevel = 60, maxLevel = 75, npc = "Desert Bandit", mob = "Desert Bandit [Lv. 60]", quest = "DesertQuest", questNPC = "Desert Bandit", questPos = CFrame.new(894.488, 5.140, 4392.195)},
+    {minLevel = 75, maxLevel = 90, npc = "Desert Officer", mob = "Desert Officer [Lv. 70]", quest = "DesertQuest", questNPC = "Desert Officer", questPos = CFrame.new(894.488, 5.140, 4392.195)},
+    {minLevel = 90, maxLevel = 110, npc = "Snow Bandit", mob = "Snow Bandit [Lv. 90]", quest = "SnowQuest", questNPC = "Snow Bandit", questPos = CFrame.new(1380.886, 5.140, -1267.758)},
+    {minLevel = 110, maxLevel = 125, npc = "Snowman", mob = "Snowman [Lv. 100]", quest = "SnowQuest", questNPC = "Snowman", questPos = CFrame.new(1380.886, 5.140, -1267.758)},
+    {minLevel = 125, maxLevel = 150, npc = "Chief Petty Officer", mob = "Chief Petty Officer [Lv. 120]", quest = "MarineQuest2", questNPC = "Chief Petty Officer", questPos = CFrame.new(-5039.586, 27.613, 4324.684)},
+    {minLevel = 150, maxLevel = 175, npc = "Sky Bandit", mob = "Sky Bandit [Lv. 150]", quest = "SkyQuest", questNPC = "Sky Bandit", questPos = CFrame.new(-4839.530, 717.667, -2619.441)},
+    {minLevel = 175, maxLevel = 200, npc = "Dark Master", mob = "Dark Master [Lv. 175]", quest = "SkyQuest", questNPC = "Dark Master", questPos = CFrame.new(-4839.530, 717.667, -2619.441)},
+    {minLevel = 200, maxLevel = 225, npc = "Toga Warrior", mob = "Toga Warrior [Lv. 200]", quest = "ColosseumQuest", questNPC = "Toga Warrior", questPos = CFrame.new(-1580.745, 7.388, -2986.324)},
+    {minLevel = 225, maxLevel = 250, npc = "Gladiator", mob = "Gladiator [Lv. 225]", quest = "ColosseumQuest", questNPC = "Gladiator", questPos = CFrame.new(-1580.745, 7.388, -2986.324)},
+    {minLevel = 250, maxLevel = 275, npc = "Military Soldier", mob = "Military Soldier [Lv. 250]", quest = "MagmaQuest", questNPC = "Military Soldier", questPos = CFrame.new(-5316.115, 12.240, 8517.003)},
+    {minLevel = 275, maxLevel = 300, npc = "Military Spy", mob = "Military Spy [Lv. 275]", quest = "MagmaQuest", questNPC = "Military Spy", questPos = CFrame.new(-5316.115, 12.240, 8517.003)},
+    {minLevel = 300, maxLevel = 325, npc = "Fishman Warrior", mob = "Fishman Warrior [Lv. 300]", quest = "FishmanQuest", questNPC = "Fishman Warrior", questPos = CFrame.new(61122.562, 18.471, 1568.165)},
+    {minLevel = 325, maxLevel = 350, npc = "Fishman Commando", mob = "Fishman Commando [Lv. 325]", quest = "FishmanQuest", questNPC = "Fishman Commando", questPos = CFrame.new(61122.562, 18.471, 1568.165)},
+    {minLevel = 350, maxLevel = 375, npc = "God's Guard", mob = "God's Guard [Lv. 350]", quest = "SkyExp1Quest", questNPC = "God's Guard", questPos = CFrame.new(-4721.860, 843.534, -1949.966)},
+    {minLevel = 375, maxLevel = 400, npc = "Shanda", mob = "Shanda [Lv. 375]", quest = "SkyExp1Quest", questNPC = "Shanda", questPos = CFrame.new(-4721.860, 843.534, -1949.966)},
+    {minLevel = 400, maxLevel = 450, npc = "Royal Squad", mob = "Royal Squad [Lv. 400]", quest = "SkyExp2Quest", questNPC = "Royal Squad", questPos = CFrame.new(-7906.815, 5545.403, -427.471)},
+    {minLevel = 450, maxLevel = 500, npc = "Royal Soldier", mob = "Royal Soldier [Lv. 450]", quest = "SkyExp2Quest", questNPC = "Royal Soldier", questPos = CFrame.new(-7906.815, 5545.403, -427.471)},
     
     -- Sea 2 (Level 500-1500)
-    elseif Lv <= 550 then return "Galley Pirate [Lv. 500]", "Galley Pirate", "MarineQuest3", "Galley Pirate", CFrame.new(-2441.219, 73.041, -3219.115)
-    elseif Lv <= 600 then return "Galley Captain [Lv. 550]", "Galley Captain", "MarineQuest3", "Galley Captain", CFrame.new(-2441.219, 73.041, -3219.115)
-    elseif Lv <= 650 then return "Raider [Lv. 600]", "Raider", "PirateQuest2", "Raider", CFrame.new(1126.050, 16.093, 4375.394)
-    elseif Lv <= 700 then return "Mercenary [Lv. 625]", "Mercenary", "PirateQuest2", "Mercenary", CFrame.new(1126.050, 16.093, 4375.394)
-    elseif Lv <= 750 then return "Swan Pirate [Lv. 675]", "Swan Pirate", "PirateQuest3", "Swan Pirate", CFrame.new(-1201.624, 7.287, 3867.555)
-    elseif Lv <= 800 then return "Marine Captain [Lv. 700]", "Marine Captain", "MarineQuest4", "Marine Captain", CFrame.new(-1324.453, 14.279, 5251.195)
-    elseif Lv <= 850 then return "Zombie [Lv. 750]", "Zombie", "ZombieQuest", "Zombie", CFrame.new(-1017.596, 4.792, 1391.436)
-    elseif Lv <= 900 then return "Vampire [Lv. 800]", "Vampire", "ZombieQuest", "Vampire", CFrame.new(-1017.596, 4.792, 1391.436)
-    elseif Lv <= 950 then return "Gunner [Lv. 850]", "Gunner", "SnowQuest", "Gunner", CFrame.new(1380.886, 5.140, -1267.758)
-    elseif Lv <= 1000 then return "Musketeer [Lv. 900]", "Musketeer", "SnowQuest", "Musketeer", CFrame.new(1380.886, 5.140, -1267.758)
-    elseif Lv <= 1050 then return "Tank [Lv. 950]", "Tank", "Area2Quest", "Tank", CFrame.new(638.369, 5.140, -854.087)
-    elseif Lv <= 1100 then return "Mythological [Lv. 1000]", "Mythological", "Area2Quest", "Mythological", CFrame.new(638.369, 5.140, -854.087)
-    elseif Lv <= 1150 then return "Winged [Lv. 1050]", "Winged", "Area3Quest", "Winged", CFrame.new(-1219.924, 4.792, -3303.152)
-    elseif Lv <= 1200 then return "Cursed [Lv. 1100]", "Cursed", "Area3Quest", "Cursed", CFrame.new(-1219.924, 4.792, -3303.152)
-    elseif Lv <= 1250 then return "Wraith [Lv. 1150]", "Wraith", "Area4Quest", "Wraith", CFrame.new(1114.105, 5.140, 2487.202)
-    elseif Lv <= 1300 then return "Demon [Lv. 1200]", "Demon", "Area4Quest", "Demon", CFrame.new(1114.105, 5.140, 2487.202)
-    elseif Lv <= 1350 then return "Dark Knight [Lv. 1250]", "Dark Knight", "Area5Quest", "Dark Knight", CFrame.new(-872.513, 14.279, -4319.683)
-    elseif Lv <= 1400 then return "Dark Pirate [Lv. 1300]", "Dark Pirate", "Area5Quest", "Dark Pirate", CFrame.new(-872.513, 14.279, -4319.683)
-    elseif Lv <= 1450 then return "Dragon Slayer [Lv. 1350]", "Dragon Slayer", "Area6Quest", "Dragon Slayer", CFrame.new(1282.105, 4.792, 3172.202)
-    elseif Lv <= 1500 then return "Dragon Warrior [Lv. 1400]", "Dragon Warrior", "Area6Quest", "Dragon Warrior", CFrame.new(1282.105, 4.792, 3172.202)
+    {minLevel = 500, maxLevel = 550, npc = "Galley Pirate", mob = "Galley Pirate [Lv. 500]", quest = "MarineQuest3", questNPC = "Galley Pirate", questPos = CFrame.new(-2441.219, 73.041, -3219.115)},
+    {minLevel = 550, maxLevel = 600, npc = "Galley Captain", mob = "Galley Captain [Lv. 550]", quest = "MarineQuest3", questNPC = "Galley Captain", questPos = CFrame.new(-2441.219, 73.041, -3219.115)},
+    {minLevel = 600, maxLevel = 650, npc = "Raider", mob = "Raider [Lv. 600]", quest = "PirateQuest2", questNPC = "Raider", questPos = CFrame.new(1126.050, 16.093, 4375.394)},
+    {minLevel = 650, maxLevel = 700, npc = "Mercenary", mob = "Mercenary [Lv. 625]", quest = "PirateQuest2", questNPC = "Mercenary", questPos = CFrame.new(1126.050, 16.093, 4375.394)},
+    {minLevel = 700, maxLevel = 750, npc = "Swan Pirate", mob = "Swan Pirate [Lv. 675]", quest = "PirateQuest3", questNPC = "Swan Pirate", questPos = CFrame.new(-1201.624, 7.287, 3867.555)},
+    {minLevel = 750, maxLevel = 800, npc = "Marine Captain", mob = "Marine Captain [Lv. 700]", quest = "MarineQuest4", questNPC = "Marine Captain", questPos = CFrame.new(-1324.453, 14.279, 5251.195)},
+    {minLevel = 800, maxLevel = 850, npc = "Zombie", mob = "Zombie [Lv. 750]", quest = "ZombieQuest", questNPC = "Zombie", questPos = CFrame.new(-1017.596, 4.792, 1391.436)},
+    {minLevel = 850, maxLevel = 900, npc = "Vampire", mob = "Vampire [Lv. 800]", quest = "ZombieQuest", questNPC = "Vampire", questPos = CFrame.new(-1017.596, 4.792, 1391.436)},
+    {minLevel = 900, maxLevel = 950, npc = "Gunner", mob = "Gunner [Lv. 850]", quest = "SnowQuest", questNPC = "Gunner", questPos = CFrame.new(1380.886, 5.140, -1267.758)},
+    {minLevel = 950, maxLevel = 1000, npc = "Musketeer", mob = "Musketeer [Lv. 900]", quest = "SnowQuest", questNPC = "Musketeer", questPos = CFrame.new(1380.886, 5.140, -1267.758)},
+    {minLevel = 1000, maxLevel = 1050, npc = "Tank", mob = "Tank [Lv. 950]", quest = "Area2Quest", questNPC = "Tank", questPos = CFrame.new(638.369, 5.140, -854.087)},
+    {minLevel = 1050, maxLevel = 1100, npc = "Mythological", mob = "Mythological [Lv. 1000]", quest = "Area2Quest", questNPC = "Mythological", questPos = CFrame.new(638.369, 5.140, -854.087)},
+    {minLevel = 1100, maxLevel = 1150, npc = "Winged", mob = "Winged [Lv. 1050]", quest = "Area3Quest", questNPC = "Winged", questPos = CFrame.new(-1219.924, 4.792, -3303.152)},
+    {minLevel = 1150, maxLevel = 1200, npc = "Cursed", mob = "Cursed [Lv. 1100]", quest = "Area3Quest", questNPC = "Cursed", questPos = CFrame.new(-1219.924, 4.792, -3303.152)},
+    {minLevel = 1200, maxLevel = 1250, npc = "Wraith", mob = "Wraith [Lv. 1150]", quest = "Area4Quest", questNPC = "Wraith", questPos = CFrame.new(1114.105, 5.140, 2487.202)},
+    {minLevel = 1250, maxLevel = 1300, npc = "Demon", mob = "Demon [Lv. 1200]", quest = "Area4Quest", questNPC = "Demon", questPos = CFrame.new(1114.105, 5.140, 2487.202)},
+    {minLevel = 1300, maxLevel = 1350, npc = "Dark Knight", mob = "Dark Knight [Lv. 1250]", quest = "Area5Quest", questNPC = "Dark Knight", questPos = CFrame.new(-872.513, 14.279, -4319.683)},
+    {minLevel = 1350, maxLevel = 1400, npc = "Dark Pirate", mob = "Dark Pirate [Lv. 1300]", quest = "Area5Quest", questNPC = "Dark Pirate", questPos = CFrame.new(-872.513, 14.279, -4319.683)},
+    {minLevel = 1400, maxLevel = 1450, npc = "Dragon Slayer", mob = "Dragon Slayer [Lv. 1350]", quest = "Area6Quest", questNPC = "Dragon Slayer", questPos = CFrame.new(1282.105, 4.792, 3172.202)},
+    {minLevel = 1450, maxLevel = 1500, npc = "Dragon Warrior", mob = "Dragon Warrior [Lv. 1400]", quest = "Area6Quest", questNPC = "Dragon Warrior", questPos = CFrame.new(1282.105, 4.792, 3172.202)},
     
     -- Sea 3 (Level 1500-2800)
-    elseif Lv <= 1600 then return "Mummy [Lv. 1500]", "Mummy", "MummyQuest", "Mummy", CFrame.new(556.369, 5.140, -1854.087)
-    elseif Lv <= 1700 then return "Pharaoh [Lv. 1600]", "Pharaoh", "MummyQuest", "Pharaoh", CFrame.new(556.369, 5.140, -1854.087)
-    elseif Lv <= 1800 then return "Cyborg [Lv. 1700]", "Cyborg", "CyborgQuest", "Cyborg", CFrame.new(-1219.924, 4.792, -4303.152)
-    elseif Lv <= 1900 then return "Robot [Lv. 1800]", "Robot", "CyborgQuest", "Robot", CFrame.new(-1219.924, 4.792, -4303.152)
-    elseif Lv <= 2000 then return "Alien [Lv. 1900]", "Alien", "AlienQuest", "Alien", CFrame.new(1114.105, 5.140, 3487.202)
-    elseif Lv <= 2100 then return "UFO [Lv. 2000]", "UFO", "AlienQuest", "UFO", CFrame.new(1114.105, 5.140, 3487.202)
-    elseif Lv <= 2200 then return "Ghost [Lv. 2100]", "Ghost", "GhostQuest", "Ghost", CFrame.new(-872.513, 14.279, -5319.683)
-    elseif Lv <= 2300 then return "Skeleton [Lv. 2200]", "Skeleton", "GhostQuest", "Skeleton", CFrame.new(-872.513, 14.279, -5319.683)
-    elseif Lv <= 2400 then return "Demon Lord [Lv. 2300]", "Demon Lord", "DemonQuest", "Demon Lord", CFrame.new(1282.105, 4.792, 4172.202)
-    elseif Lv <= 2500 then return "Dark Lord [Lv. 2400]", "Dark Lord", "DemonQuest", "Dark Lord", CFrame.new(1282.105, 4.792, 4172.202)
-    elseif Lv <= 2600 then return "Shadow King [Lv. 2500]", "Shadow King", "ShadowQuest", "Shadow King", CFrame.new(556.369, 5.140, -2854.087)
-    elseif Lv <= 2700 then return "Nightmare [Lv. 2600]", "Nightmare", "ShadowQuest", "Nightmare", CFrame.new(556.369, 5.140, -2854.087)
-    elseif Lv <= 2800 then return "Hell Beast [Lv. 2700]", "Hell Beast", "HellQuest", "Hell Beast", CFrame.new(-1219.924, 4.792, -6303.152)
+    {minLevel = 1500, maxLevel = 1600, npc = "Mummy", mob = "Mummy [Lv. 1500]", quest = "MummyQuest", questNPC = "Mummy", questPos = CFrame.new(556.369, 5.140, -1854.087)},
+    {minLevel = 1600, maxLevel = 1700, npc = "Pharaoh", mob = "Pharaoh [Lv. 1600]", quest = "MummyQuest", questNPC = "Pharaoh", questPos = CFrame.new(556.369, 5.140, -1854.087)},
+    {minLevel = 1700, maxLevel = 1800, npc = "Cyborg", mob = "Cyborg [Lv. 1700]", quest = "CyborgQuest", questNPC = "Cyborg", questPos = CFrame.new(-1219.924, 4.792, -4303.152)},
+    {minLevel = 1800, maxLevel = 1900, npc = "Robot", mob = "Robot [Lv. 1800]", quest = "CyborgQuest", questNPC = "Robot", questPos = CFrame.new(-1219.924, 4.792, -4303.152)},
+    {minLevel = 1900, maxLevel = 2000, npc = "Alien", mob = "Alien [Lv. 1900]", quest = "AlienQuest", questNPC = "Alien", questPos = CFrame.new(1114.105, 5.140, 3487.202)},
+    {minLevel = 2000, maxLevel = 2100, npc = "UFO", mob = "UFO [Lv. 2000]", quest = "AlienQuest", questNPC = "UFO", questPos = CFrame.new(1114.105, 5.140, 3487.202)},
+    {minLevel = 2100, maxLevel = 2200, npc = "Ghost", mob = "Ghost [Lv. 2100]", quest = "GhostQuest", questNPC = "Ghost", questPos = CFrame.new(-872.513, 14.279, -5319.683)},
+    {minLevel = 2200, maxLevel = 2300, npc = "Skeleton", mob = "Skeleton [Lv. 2200]", quest = "GhostQuest", questNPC = "Skeleton", questPos = CFrame.new(-872.513, 14.279, -5319.683)},
+    {minLevel = 2300, maxLevel = 2400, npc = "Demon Lord", mob = "Demon Lord [Lv. 2300]", quest = "DemonQuest", questNPC = "Demon Lord", questPos = CFrame.new(1282.105, 4.792, 4172.202)},
+    {minLevel = 2400, maxLevel = 2500, npc = "Dark Lord", mob = "Dark Lord [Lv. 2400]", quest = "DemonQuest", questNPC = "Dark Lord", questPos = CFrame.new(1282.105, 4.792, 4172.202)},
+    {minLevel = 2500, maxLevel = 2600, npc = "Shadow King", mob = "Shadow King [Lv. 2500]", quest = "ShadowQuest", questNPC = "Shadow King", questPos = CFrame.new(556.369, 5.140, -2854.087)},
+    {minLevel = 2600, maxLevel = 2700, npc = "Nightmare", mob = "Nightmare [Lv. 2600]", quest = "ShadowQuest", questNPC = "Nightmare", questPos = CFrame.new(556.369, 5.140, -2854.087)},
+    {minLevel = 2700, maxLevel = 2800, npc = "Hell Beast", mob = "Hell Beast [Lv. 2700]", quest = "HellQuest", questNPC = "Hell Beast", questPos = CFrame.new(-1219.924, 4.792, -6303.152)},
+}
+
+-- Função para encontrar quest atual
+local function getQuestData()
+    local Lv = player.Data.Level.Value
+    for _, data in ipairs(questData) do
+        if Lv >= data.minLevel and Lv <= data.maxLevel then
+            return data
+        end
     end
-    
-    return nil, nil, nil, nil, nil
+    return nil
 end
 
 -- Função Teleporte
@@ -319,7 +324,7 @@ local function TP(P)
     ):Play()
 end
 
--- AutoFarm Loop
+-- AutoFarm Loop CORRIGIDO
 spawn(function()
     while task.wait() do
         if getgenv().AutoFarm then
@@ -328,17 +333,28 @@ spawn(function()
             local hrp = char:FindFirstChild("HumanoidRootPart")
             if not hrp then continue end
             
-            local Ms, NM, LQ, NQ, CQ = CheckQuest()
-            if not Ms then continue end
+            local questData = getQuestData()
+            if not questData then continue end
+            
+            -- Verificar se tem quest ativa
+            local questVisible = false
+            pcall(function()
+                questVisible = player.PlayerGui.Main.Quest.Visible
+            end)
             
             if getgenv().AutoQuest then
-                if player.PlayerGui.Main.Quest.Visible == false then
-                    TP(CQ)
-                    task.wait(0.9)
-                    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("StartQuest", LQ, NQ)
-                elseif player.PlayerGui.Main.Quest.Visible == true then
+                if not questVisible then
+                    -- Teleportar para NPC de quest
+                    TP(questData.questPos)
+                    task.wait(1)
+                    -- Tentar pegar quest
+                    pcall(function()
+                        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("StartQuest", questData.quest, questData.questNPC)
+                    end)
+                else
+                    -- Procurar mobs
                     for _, v in ipairs(workspace.Enemies:GetChildren()) do
-                        if v.Name == Ms then
+                        if v.Name == questData.mob then
                             TP(v.HumanoidRootPart.CFrame * CFrame.new(0, 20, 0))
                             v.HumanoidRootPart.Size = Vector3.new(60, 60, 60)
                         end
@@ -395,7 +411,7 @@ statsToggle.setEnabled(false)
 -- Atualizar toggles
 task.spawn(function()
     while task.wait(0.1) do
-        if farmToggle.isEnabled() then
+        if farmToggle.isEnabled() or autoFarmToggle.isEnabled() then
             getgenv().AutoFarm = true
         else
             getgenv().AutoFarm = false
